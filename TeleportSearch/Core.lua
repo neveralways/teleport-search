@@ -58,11 +58,6 @@ local function updateTeleportDB()
                         local spellID, _, isSlotKnown = GetFlyoutSlotInfo(ID, k)
                         local cooldownHours = millisToHour(getSpellCooldownMillis(spellID))
 
-                        if spellID == 361584 then
-                            createSpellButton(scrollChild, spellID, buttonIndex)
-                            buttonIndex = buttonIndex + 1
-                        end
-
                         if isSlotKnown and cooldownHours == 8 then
                             local name, _, _ = GetSpellInfo(spellID)
                             local description = GetSpellDescription(spellID):lower()
