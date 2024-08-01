@@ -90,17 +90,12 @@ mainFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
         local addonName = ...
         if addonName == "TeleportSearch" then
-            updateTeleportDB()
             minimapButton:UpdatePosition()
 
             self:UnregisterEvent("ADDON_LOADED")
         end
-    elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
-        local unitID = ...
-        if unitID == "player" then
-            
-            mainFrame:Hide()
-        end
+    elseif event == "SPELLS_CHANGED" then
+        updateTeleportDB()
     end
 end)
 

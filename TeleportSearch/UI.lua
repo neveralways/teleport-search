@@ -8,7 +8,7 @@ mainFrame:RegisterForDrag("LeftButton")
 mainFrame:SetScript("OnDragStart", mainFrame.StartMoving)
 mainFrame:SetScript("OnDragStop", mainFrame.StopMovingOrSizing)
 mainFrame:RegisterEvent("ADDON_LOADED")
-mainFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+mainFrame:RegisterEvent("SPELLS_CHANGED")
 mainFrame:Hide()
 tinsert(UISpecialFrames, "TeleportSearchFrame")
 
