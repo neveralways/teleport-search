@@ -96,6 +96,8 @@ mainFrame:SetScript("OnEvent", function(self, event, ...)
         end
     elseif event == "SPELLS_CHANGED" then
         updateTeleportDB()
+
+        self:UnregisterEvent("SPELLS_CHANGED")
     end
 end)
 
