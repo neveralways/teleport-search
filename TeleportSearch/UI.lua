@@ -1,4 +1,4 @@
-mainFrame = CreateFrame("Frame", "TeleportSearchFrame", UIParent, "BasicFrameTemplateWithInset")
+mainFrame = CreateFrame("Frame", "TeleportSearchFrame", UIParent, "BaseBasicFrameTemplate")
 mainFrame:SetSize(300, 360)
 mainFrame:SetPoint("CENTER")
 mainFrame:EnableMouse(true)
@@ -11,6 +11,10 @@ mainFrame:RegisterEvent("ADDON_LOADED")
 mainFrame:RegisterEvent("SPELLS_CHANGED")
 mainFrame:Hide()
 tinsert(UISpecialFrames, "TeleportSearchFrame")
+
+local mainFrameTexture = mainFrame:CreateTexture(nil, "BACKGROUND")
+mainFrameTexture:SetTexture("Interface\\AddOns\\TeleportSearch\\Textures\\mft.tga")
+mainFrameTexture:SetAllPoints(mainFrame)
 
 local function createScrollFrame(parent)
     local scrollFrame = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
@@ -26,24 +30,24 @@ local function createScrollFrame(parent)
 end
 
 local function createSearchBox(parent)
-    local searchBox = CreateFrame("EditBox", "TeleportSearchBox", parent, "InputBoxTemplate")
-    searchBox:SetSize(260, 20)
+    local searchBox = CreateFrame("EditBox", "TeleportSearchBox", parent, "SearchBoxTemplate")
+    searchBox:SetSize(260, 10)
     searchBox:SetPoint("TOP", parent, "TOP", 0, -50)
     searchBox:SetAutoFocus(false)
     searchBox:SetFontObject("ChatFontNormal")
+
     return searchBox
 end
 
 local function createSearchLabel(parent)
     local label = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    label:SetPoint("BOTTOMLEFT", parent, "TOPLEFT", 0, 5)
+    label:SetPoint("BOTTOMLEFT", parent, "TOPLEFT", 0, 2)
     label:SetText("Search:")
     return label
 end
 
 scrollFrame, scrollChild = createScrollFrame(mainFrame)
 searchBox = createSearchBox(mainFrame)
-searchLabel = createSearchLabel(searchBox)
 
 function createSpellButton(parent, spellID, index)
     local name, _, icon = GetSpellInfo(spellID)
@@ -121,6 +125,7 @@ minimapButton:SetScript("OnClick", function(self, button)
             mainFrame:Hide()
         else
             mainFrame:Show()
+            searchBox:SetFocus()
         end
     end
 end)

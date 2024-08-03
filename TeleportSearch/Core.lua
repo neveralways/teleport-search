@@ -78,12 +78,18 @@ end
 
 
 searchBox:SetScript("OnTextChanged", function(self, userInput)
+    SearchBoxTemplate_OnTextChanged(self)
     if userInput then
         updateTeleportDB()
     end
 end)
 searchBox:SetScript("OnMouseDown", function(self)
     self:SetText("")
+end)
+searchBox.clearButton:SetScript("OnClick", function(self)
+    clearSearchBox()
+    updateTeleportDB()
+    SearchBoxTemplateClearButton_OnClick(self);
 end)
 
 mainFrame:SetScript("OnEvent", function(self, event, ...)
