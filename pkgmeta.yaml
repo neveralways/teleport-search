@@ -3,7 +3,7 @@ package-as: TeleportSearch
 enable-nolib-creation: no
 
 move-folders:
-  TeleportSearch/TeleportSearch: TeleportSearch
+  TeleportSearch/src: TeleportSearch
 
 ignore:
   - README.md
