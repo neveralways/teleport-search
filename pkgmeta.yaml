@@ -1,0 +1,9 @@
+package-as: TeleportSearch
+
+enable-nolib-creation: no
+
+move-folders:
+  TeleportSearch/TeleportSearch: TeleportSearch
+
+ignore:
+  - README.md
