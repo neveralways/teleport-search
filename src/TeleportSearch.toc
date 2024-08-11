@@ -1,6 +1,6 @@
 ## Interface: 110000, 110002
 ## Title: Teleport search
-## Version: 1.1.1
+## Version: 1.1.2
 ## Notes: Search for the mythic+ teleport you want.
 ## Author: Neveralways
 
