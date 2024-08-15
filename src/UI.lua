@@ -50,7 +50,7 @@ scrollFrame, scrollChild = createScrollFrame(mainFrame)
 searchBox = createSearchBox(mainFrame)
 
 function createSpellButton(parent, spellID, index)
-    local name, _, icon = GetSpellInfo(spellID)
+    local spellInfo = C_Spell.GetSpellInfo(spellID)
     local btn = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate")
     btn:SetSize(260, 40)
     btn:SetPoint("TOP", 0, -40 * (index - 1))
@@ -58,11 +58,11 @@ function createSpellButton(parent, spellID, index)
     local spellIcon = btn:CreateTexture(nil, "ARTWORK")
     spellIcon:SetSize(36, 36)
     spellIcon:SetPoint("LEFT", btn, "LEFT", 10, 0)
-    spellIcon:SetTexture(icon)
+    spellIcon:SetTexture(spellInfo.iconID)
 
     local spellName = btn:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     spellName:SetPoint("LEFT", spellIcon, "RIGHT", 10, 0)
-    spellName:SetText(name)
+    spellName:SetText(spellInfo.name)
 
     local cooldown = CreateFrame("Cooldown", nil, btn, "CooldownFrameTemplate")
     cooldown:SetAllPoints(spellIcon)
@@ -85,7 +85,7 @@ function createSpellButton(parent, spellID, index)
 end
 
 function updateCooldown(btn, spellID)
-    local start, duration = GetSpellCooldown(spellID)
+    local start, duration = C_Spell.GetSpellCooldown(spellID)
     if start and duration and duration > 0 then
         local endTime = start + duration
         local timeLeft = endTime - GetTime()

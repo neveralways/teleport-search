@@ -45,10 +45,11 @@ local function updateTeleportDB()
 
     clearScroll()
 
-    for i = 1, GetNumSpellTabs() do
-        local _, _, offset, numSpells = GetSpellTabInfo(i)
-        for j = offset + 1, offset + numSpells do
-            local spellType, ID = C_SpellBook.GetSpellBookItemType(j, Enum.SpellBookSpellBank.Player)
+    for i = 1, C_SpellBook.GetNumSpellBookSkillLines() do
+        local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(i)
+        for j = 1, skillLineInfo.numSpellBookItems do
+            local spellIndex = skillLineInfo.itemIndexOffset + j
+            local spellType, ID = C_SpellBook.GetSpellBookItemType(spellIndex, Enum.SpellBookSpellBank.Player)
 
             if spellType == Enum.SpellBookItemType.Flyout then
                 local _, _, numSlots, isKnown = GetFlyoutInfo(ID)
@@ -59,10 +60,10 @@ local function updateTeleportDB()
                         local cooldownHours = millisToHour(getSpellCooldownMillis(spellID))
 
                         if isSlotKnown and cooldownHours == 8 then
-                            local name, _, _ = GetSpellInfo(spellID)
-                            local description = GetSpellDescription(spellID):lower()
+                            local spellInfo = C_Spell.GetSpellInfo(spellID)
+                            local description = C_Spell.GetSpellDescription(spellID):lower()
 
-                            if (name:lower():find(filterText) or description:find(filterText)) then
+                            if (spellInfo.name:lower():find(filterText) or description:find(filterText)) then
                                 createSpellButton(scrollChild, spellID, buttonIndex)
                                 buttonIndex = buttonIndex + 1
                             end
