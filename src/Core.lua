@@ -1,3 +1,42 @@
+StoneToysID = {}
+
+function isHearthstoneId(id)
+    return id == 6948
+end
+
+function isMageFlyoutId(flyoutID)
+    return flyoutID == 1 or flyoutID == 11
+end
+
+function addHearthstoneToysID()
+    local bindLocation = GetBindLocation():lower()
+    local hasHS = C_Container.PlayerHasHearthstone() ~= nil
+
+    StoneToysID = {
+        140192,
+        110560,
+    }
+
+    if bindLocation and not hasHS then
+        local i = 1
+        local hsFound = false
+        while i <= C_ToyBox.GetNumToys() and not hsFound do
+            local toyID = C_ToyBox.GetToyFromIndex(i)
+            if toyID then
+                local _, spellID = GetItemSpell(toyID)
+                if spellID then
+                    local spellDescription = C_Spell.GetSpellDescription(spellID):lower()
+                    if spellDescription and PlayerHasToy(toyID) and spellDescription:find(bindLocation) then
+                        table.insert(StoneToysID, toyID)
+                        hsFound = true
+                    end
+                end
+            end
+            i = i + 1
+        end
+    end
+end
+
 function formatTime(seconds)
     if seconds <= 0 then
         return ""
@@ -43,6 +82,7 @@ local function updateTeleportDB()
     local filterText = searchBox:GetText():lower()
     local buttonIndex = 1
 
+    addHearthstoneToysID()
     clearScroll()
 
     for i = 1, C_SpellBook.GetNumSpellBookSkillLines() do
@@ -59,17 +99,42 @@ local function updateTeleportDB()
                         local spellID, _, isSlotKnown = GetFlyoutSlotInfo(ID, k)
                         local cooldownHours = millisToHour(getSpellCooldownMillis(spellID))
 
-                        if isSlotKnown and cooldownHours == 8 then
+                        if (isSlotKnown and cooldownHours == 8) or isMageFlyoutId(ID) then
                             local spellInfo = C_Spell.GetSpellInfo(spellID)
                             local description = C_Spell.GetSpellDescription(spellID):lower()
 
-                            if (spellInfo.name:lower():find(filterText) or description:find(filterText)) then
+                            if IsSpellKnown(spellID) and (spellInfo.name:lower():find(filterText) or description:find(filterText)) then
                                 createSpellButton(scrollChild, spellID, buttonIndex)
                                 buttonIndex = buttonIndex + 1
                             end
                         end
                     end
                 end
+            end
+        end
+    end
+
+    for i, toyID in ipairs(StoneToysID) do
+        local _, toyName, icon = C_ToyBox.GetToyInfo(toyID)
+        local _, spellID = GetItemSpell(toyID)
+        if toyName and spellID then
+            local spellDescription = C_Spell.GetSpellDescription(spellID):lower()
+            if spellDescription and PlayerHasToy(toyID) and (toyName:lower():find(filterText) or spellDescription:find(filterText)) then
+                createToyButton(scrollChild, toyID, buttonIndex)
+                buttonIndex = buttonIndex + 1
+            end
+        end
+    end
+
+    local itemID = C_Container.PlayerHasHearthstone()
+    if itemID then
+        local itemName, _, _, _, _, _, _, _, _, itemIcon = GetItemInfo(itemID)
+        local _, spellID = GetItemSpell(itemID)
+        if itemName and spellID then
+            local spellDescription = C_Spell.GetSpellDescription(spellID):lower()
+            if spellDescription and (itemName:lower():find(filterText) or spellDescription:find(filterText)) then
+                createItemButton(scrollChild, itemID, buttonIndex)
+                buttonIndex = buttonIndex + 1
             end
         end
     end
@@ -102,6 +167,7 @@ mainFrame:SetScript("OnEvent", function(self, event, ...)
             self:UnregisterEvent("ADDON_LOADED")
         end
     elseif event == "SPELLS_CHANGED" then
+        addHearthstoneToysID()
         updateTeleportDB()
 
         self:UnregisterEvent("SPELLS_CHANGED")

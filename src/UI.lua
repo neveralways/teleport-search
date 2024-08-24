@@ -84,8 +84,89 @@ function createSpellButton(parent, spellID, index)
     return btn
 end
 
+function createToyButton(parent, toyID, index)
+    local _, toyName, toyIcon = C_ToyBox.GetToyInfo(toyID)
+    local btn = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate")
+    btn:SetSize(260, 40)
+    btn:SetPoint("TOP", 0, -40 * (index - 1))
+
+    local icon = btn:CreateTexture(nil, "ARTWORK")
+    icon:SetSize(36, 36)
+    icon:SetPoint("LEFT", btn, "LEFT", 10, 0)
+    icon:SetTexture(toyIcon)
+
+    local name = btn:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    name:SetPoint("LEFT", icon, "RIGHT", 10, 0)
+    name:SetText(toyName)
+
+    local cooldown = CreateFrame("Cooldown", nil, btn, "CooldownFrameTemplate")
+    cooldown:SetAllPoints(icon)
+    cooldown:SetDrawEdge(true)
+
+    local cooldownText = cooldown:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    cooldownText:SetPoint("CENTER", cooldown, "CENTER", 0, 0)
+
+    btn.cooldown = cooldown
+    btn.cooldownText = cooldownText
+
+    btn:RegisterForClicks("LeftButtonDown")
+    btn:SetAttribute("type", "toy")
+    btn:SetAttribute("toy", toyID)
+
+    updateItemCooldown(btn, toyID)
+
+    return btn
+end
+
+function createItemButton(parent, itemID, index)
+    local itemName, _, _, _, _, _, _, _, _, itemIcon = GetItemInfo(itemID)
+    local btn = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate")
+    btn:SetSize(260, 40)
+    btn:SetPoint("TOP", 0, -40 * (index - 1))
+
+    local icon = btn:CreateTexture(nil, "ARTWORK")
+    icon:SetSize(36, 36)
+    icon:SetPoint("LEFT", btn, "LEFT", 10, 0)
+    icon:SetTexture(itemIcon)
+
+    local name = btn:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    name:SetPoint("LEFT", icon, "RIGHT", 10, 0)
+    name:SetText(itemName)
+
+    local cooldown = CreateFrame("Cooldown", nil, btn, "CooldownFrameTemplate")
+    cooldown:SetAllPoints(icon)
+    cooldown:SetDrawEdge(true)
+
+    local cooldownText = cooldown:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    cooldownText:SetPoint("CENTER", cooldown, "CENTER", 0, 0)
+
+    btn.cooldown = cooldown
+    btn.cooldownText = cooldownText
+
+    btn:RegisterForClicks("LeftButtonDown")
+    btn:SetAttribute("type", "item")
+    btn:SetAttribute("item", "item:" .. itemID)
+    
+    updateItemCooldown(btn, itemID)
+
+    return btn
+end
+
+
 function updateCooldown(btn, spellID)
     local start, duration = C_Spell.GetSpellCooldown(spellID)
+    if start and duration and duration > 0 then
+        local endTime = start + duration
+        local timeLeft = endTime - GetTime()
+        btn.cooldown:SetCooldown(start, duration)
+        btn.cooldownText:SetText(formatTime(timeLeft))
+    else
+        btn.cooldownText:SetText("")
+    end
+end
+
+function updateItemCooldown(btn, itemID)
+    local start, duration = GetItemCooldown(itemID)
     if start and duration and duration > 0 then
         local endTime = start + duration
         local timeLeft = endTime - GetTime()
