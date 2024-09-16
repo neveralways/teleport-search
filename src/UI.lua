@@ -222,11 +222,14 @@ minimapButton:SetScript("OnLeave", function(self)
     GameTooltip:Hide()
 end)
 
+SLASH_TELEPORTSEARCH1 = '/ts'
+SLASH_TELEPORTSEARCH2 = '/teleportsearch'
 
-
-
-
-
-
-
-
+SlashCmdList["TELEPORTSEARCH"] = function(msg)
+    if mainFrame:IsShown() then
+        mainFrame:Hide()
+    else
+        mainFrame:Show()
+        searchBox:SetFocus()
+    end
+end
