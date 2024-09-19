@@ -1,4 +1,7 @@
 StoneToysID = {}
+spellIDs = {}
+currentSeasonSpellIDs = {}
+mapNames = {}
 
 function isHearthstoneId(id)
     return id == 6948
@@ -59,6 +62,29 @@ local function getSpellCooldownMillis(spellID)
     return cooldown
 end
 
+local function checkMapNamesInDescription(description)
+    local lowerDescription = description:lower()
+
+    for _, mapName in ipairs(mapNames) do
+        local lowerMapName = mapName:lower()
+
+        if lowerDescription:find(lowerMapName) then
+            return true
+        end
+    end
+
+    return false
+end
+
+function isInArray(array, value)
+    for _, v in ipairs(array) do
+        if v == value then
+            return true
+        end
+    end
+    return false
+end
+
 local function clearSearchBox()
     if searchBox then
         searchBox:SetText("")
@@ -81,6 +107,8 @@ end
 local function updateTeleportDB()
     local filterText = searchBox:GetText():lower()
     local buttonIndex = 1
+    spellIDs = {}
+    currentSeasonSpellIDs = {}
 
     addHearthstoneToysID()
     clearScroll()
@@ -104,14 +132,23 @@ local function updateTeleportDB()
                             local description = C_Spell.GetSpellDescription(spellID):lower()
 
                             if IsSpellKnown(spellID) and (spellInfo.name:lower():find(filterText) or description:find(filterText)) then
-                                createSpellButton(scrollChild, spellID, buttonIndex)
-                                buttonIndex = buttonIndex + 1
+                                if checkMapNamesInDescription(description) then
+                                    table.insert(spellIDs, 1, spellID)
+                                    table.insert(currentSeasonSpellIDs, spellID)
+                                else
+                                    table.insert(spellIDs, spellID)
+                                end
                             end
                         end
                     end
                 end
             end
         end
+    end
+
+    for i, spellID in ipairs(spellIDs) do
+        createSpellButton(scrollChild, spellID, buttonIndex, isInArray(currentSeasonSpellIDs, spellID))
+        buttonIndex = buttonIndex + 1
     end
 
     for i, toyID in ipairs(StoneToysID) do
@@ -142,6 +179,12 @@ local function updateTeleportDB()
     scrollChild:SetHeight(40 * buttonIndex)
 end
 
+local function storeMapNames()
+    for key, value in pairs(C_ChallengeMode.GetMapTable()) do
+        name, id, timeLimit, texture, backgroundTexture = C_ChallengeMode.GetMapUIInfo(value)
+        table.insert(mapNames, name)
+    end
+end
 
 searchBox:SetScript("OnTextChanged", function(self, userInput)
     SearchBoxTemplate_OnTextChanged(self)
@@ -163,6 +206,7 @@ mainFrame:SetScript("OnEvent", function(self, event, ...)
         local addonName = ...
         if addonName == "TeleportSearch" then
             minimapButton:UpdatePosition()
+            storeMapNames()
 
             self:UnregisterEvent("ADDON_LOADED")
         end

@@ -49,7 +49,7 @@ end
 scrollFrame, scrollChild = createScrollFrame(mainFrame)
 searchBox = createSearchBox(mainFrame)
 
-function createSpellButton(parent, spellID, index)
+function createSpellButton(parent, spellID, index, isHighlighted)
     local spellInfo = C_Spell.GetSpellInfo(spellID)
     local btn = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate")
     btn:SetSize(260, 40)
@@ -80,6 +80,10 @@ function createSpellButton(parent, spellID, index)
     btn:SetAttribute("spell", spellID)
 
     updateCooldown(btn, spellID)
+
+    if isHighlighted then
+        spellName:SetTextColor(1, 1, 0)
+    end
 
     return btn
 end
