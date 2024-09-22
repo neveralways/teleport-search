@@ -104,12 +104,21 @@ local function clearScroll()
     end
 end
 
+local function storeMapNames()
+    mapNames = {}
+    for key, value in pairs(C_ChallengeMode.GetMapTable()) do
+        name, id, timeLimit, texture, backgroundTexture = C_ChallengeMode.GetMapUIInfo(value)
+        table.insert(mapNames, name)
+    end
+end
+
 local function updateTeleportDB()
     local filterText = searchBox:GetText():lower()
     local buttonIndex = 1
     spellIDs = {}
     currentSeasonSpellIDs = {}
 
+    storeMapNames()
     addHearthstoneToysID()
     clearScroll()
 
@@ -179,13 +188,6 @@ local function updateTeleportDB()
     scrollChild:SetHeight(40 * buttonIndex)
 end
 
-local function storeMapNames()
-    for key, value in pairs(C_ChallengeMode.GetMapTable()) do
-        name, id, timeLimit, texture, backgroundTexture = C_ChallengeMode.GetMapUIInfo(value)
-        table.insert(mapNames, name)
-    end
-end
-
 searchBox:SetScript("OnTextChanged", function(self, userInput)
     SearchBoxTemplate_OnTextChanged(self)
     if userInput then
@@ -206,7 +208,6 @@ mainFrame:SetScript("OnEvent", function(self, event, ...)
         local addonName = ...
         if addonName == "TeleportSearch" then
             minimapButton:UpdatePosition()
-            storeMapNames()
 
             self:UnregisterEvent("ADDON_LOADED")
         end
@@ -216,6 +217,11 @@ mainFrame:SetScript("OnEvent", function(self, event, ...)
 
         self:UnregisterEvent("SPELLS_CHANGED")
     end
+end)
+
+mainFrame:SetScript("OnShow", function()
+    clearSearchBox()
+    updateTeleportDB()
 end)
 
 mainFrame:SetScript("OnHide", function()
