@@ -115,13 +115,17 @@ local function storeMapNames()
 end
 
 local function createItemSpellButtonByItemID(itemID, buttonIndex, filterText)
-    local itemName, _, _, _, _, _, _, _, _, itemIcon = GetItemInfo(itemID)
-    local _, spellID = GetItemSpell(itemID)
-    if itemName and spellID then
-        local spellDescription = C_Spell.GetSpellDescription(spellID):lower()
-        if spellDescription and (itemName:lower():find(filterText) or spellDescription:find(filterText)) then
-            createItemButton(scrollChild, itemID, buttonIndex)
-            buttonIndex = buttonIndex + 1
+    local itemCount = GetItemCount(itemID)
+
+    if itemCount > 0 then
+        local itemName, _, _, _, _, _, _, _, _, itemIcon = GetItemInfo(itemID)
+        local _, spellID = GetItemSpell(itemID)
+        if itemName and spellID then
+            local spellDescription = C_Spell.GetSpellDescription(spellID):lower()
+            if spellDescription and (itemName:lower():find(filterText) or spellDescription:find(filterText)) then
+                createItemButton(scrollChild, itemID, buttonIndex)
+                buttonIndex = buttonIndex + 1
+            end
         end
     end
 
