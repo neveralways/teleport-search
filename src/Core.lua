@@ -3,6 +3,8 @@ spellIDs = {}
 currentSeasonSpellIDs = {}
 mapNames = {}
 
+jainaLocketItemID = 52251
+
 function isHearthstoneId(id)
     return id == 6948
 end
@@ -112,6 +114,20 @@ local function storeMapNames()
     end
 end
 
+local function createItemSpellButtonByItemID(itemID, buttonIndex, filterText)
+    local itemName, _, _, _, _, _, _, _, _, itemIcon = GetItemInfo(itemID)
+    local _, spellID = GetItemSpell(itemID)
+    if itemName and spellID then
+        local spellDescription = C_Spell.GetSpellDescription(spellID):lower()
+        if spellDescription and (itemName:lower():find(filterText) or spellDescription:find(filterText)) then
+            createItemButton(scrollChild, itemID, buttonIndex)
+            buttonIndex = buttonIndex + 1
+        end
+    end
+
+    return buttonIndex
+end
+
 local function updateTeleportDB()
     local filterText = searchBox:GetText():lower()
     local buttonIndex = 1
@@ -174,16 +190,10 @@ local function updateTeleportDB()
 
     local itemID = C_Container.PlayerHasHearthstone()
     if itemID then
-        local itemName, _, _, _, _, _, _, _, _, itemIcon = GetItemInfo(itemID)
-        local _, spellID = GetItemSpell(itemID)
-        if itemName and spellID then
-            local spellDescription = C_Spell.GetSpellDescription(spellID):lower()
-            if spellDescription and (itemName:lower():find(filterText) or spellDescription:find(filterText)) then
-                createItemButton(scrollChild, itemID, buttonIndex)
-                buttonIndex = buttonIndex + 1
-            end
-        end
+        buttonIndex = createItemSpellButtonByItemID(itemID, buttonIndex, filterText)
     end
+
+    createItemSpellButtonByItemID(jainaLocketItemID, buttonIndex, filterText)
 
     scrollChild:SetHeight(40 * buttonIndex)
 end
