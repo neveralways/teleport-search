@@ -1,4 +1,4 @@
-## Interface: 110005
+## Interface: 110007
 ## Title: Teleport search
 ## Version: 1.3.5
 ## Notes: Search for the mythic+ teleport you want.
