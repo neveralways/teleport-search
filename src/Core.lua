@@ -2,6 +2,7 @@ StoneToysID = {}
 spellIDs = {}
 currentSeasonSpellIDs = {}
 mapNames = {}
+isFrameShown = false
 
 jainaLocketItemID = 52251
 
@@ -231,6 +232,16 @@ mainFrame:SetScript("OnEvent", function(self, event, ...)
         updateTeleportDB()
 
         self:UnregisterEvent("SPELLS_CHANGED")
+    elseif event == "PLAYER_REGEN_DISABLED" then
+        if self:IsShown() then
+            isFrameShown = true
+            self:Hide()
+        end
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        if isFrameShown then
+            isFrameShown = false
+            self:Show()
+        end
     end
 end)
 

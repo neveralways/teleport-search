@@ -9,6 +9,8 @@ mainFrame:SetScript("OnDragStart", mainFrame.StartMoving)
 mainFrame:SetScript("OnDragStop", mainFrame.StopMovingOrSizing)
 mainFrame:RegisterEvent("ADDON_LOADED")
 mainFrame:RegisterEvent("SPELLS_CHANGED")
+mainFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+mainFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 mainFrame:Hide()
 tinsert(UISpecialFrames, "TeleportSearchFrame")
 
@@ -158,7 +160,10 @@ end
 
 
 function updateCooldown(btn, spellID)
-    local start, duration = C_Spell.GetSpellCooldown(spellID)
+    local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
+    local start = cooldownInfo.startTime
+    local duration = cooldownInfo.duration
+
     if start and duration and duration > 0 then
         local endTime = start + duration
         local timeLeft = endTime - GetTime()
@@ -170,7 +175,7 @@ function updateCooldown(btn, spellID)
 end
 
 function updateItemCooldown(btn, itemID)
-    local start, duration = GetItemCooldown(itemID)
+    local start, duration = C_Container.GetItemCooldown(itemID)
     if start and duration and duration > 0 then
         local endTime = start + duration
         local timeLeft = endTime - GetTime()
