@@ -69,8 +69,11 @@ local function checkMapNamesInDescription(description)
     local lowerDescription = string.gsub(description:lower(), "-", "")
 
     for _, mapName in ipairs(mapNames) do
-        local lowerMapName = string.gsub(mapName:lower(), "-", "")
-        
+        local lowerMapName = mapName:lower()
+        local dashIndex = string.find(lowerMapName, "-")
+        if dashIndex then
+            lowerMapName = string.sub(lowerMapName, 1, dashIndex - 2)
+        end
 
         if lowerDescription:find(lowerMapName) then
             return true
@@ -161,7 +164,6 @@ local function updateTeleportDB()
                         if (isSlotKnown and cooldownHours == 8) or isMageFlyoutId(ID) then
                             local spellInfo = C_Spell.GetSpellInfo(spellID)
                             local description = string.gsub(C_Spell.GetSpellDescription(spellID):lower(), "-", "")
-
                             if IsSpellKnown(spellID) and (spellInfo.name:lower():find(filterText) or description:find(filterText)) then
                                 if checkMapNamesInDescription(description) then
                                     table.insert(spellIDs, 1, spellID)
