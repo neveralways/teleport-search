@@ -18,6 +18,19 @@ local mainFrameTexture = mainFrame:CreateTexture(nil, "BACKGROUND")
 mainFrameTexture:SetTexture("Interface\\AddOns\\TeleportSearch\\Textures\\mft.tga")
 mainFrameTexture:SetAllPoints(mainFrame)
 
+local seasonTitle = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+seasonTitle:SetPoint("TOP", mainFrame, "TOP", 0, -3)
+seasonTitle:SetTextColor(1, 0.8, 0)
+
+function updateSeasonTitle()
+    local currentSeason = C_MythicPlus.GetCurrentUIDisplaySeason() or 0
+    if currentSeason and currentSeason > 0 then
+        seasonTitle:SetText("Season " .. currentSeason)
+    else
+        seasonTitle:SetText("Season")
+    end
+end
+
 local function createScrollFrame(parent)
     local scrollFrame = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
     scrollFrame:SetSize(280, 270)

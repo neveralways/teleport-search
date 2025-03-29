@@ -250,6 +250,7 @@ end)
 mainFrame:SetScript("OnShow", function()
     clearSearchBox()
     updateTeleportDB()
+    updateSeasonTitle()
 end)
 
 mainFrame:SetScript("OnHide", function()
