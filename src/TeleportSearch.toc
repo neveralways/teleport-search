@@ -1,4 +1,4 @@
-## Interface: 120000
+## Interface: 120001
 ## Title: Teleport search
 ## Version: 1.5.1
 ## Notes: Search for the mythic+ teleport you want.
