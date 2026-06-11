@@ -1,9 +1,10 @@
-## Interface: 120005
+## Interface: 120005, 120007
 ## Title: Teleport search
-## Version: 1.5.1
+## Version: 1.6.0
 ## Notes: Search for the mythic+ teleport you want.
 ## IconTexture: Interface\AddOns\TeleportSearch\Textures\addon_icon.tga
 ## Author: Neveralways
+## SavedVariables: TeleportSearchDB
 
 UI.lua
 Core.lua
