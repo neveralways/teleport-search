@@ -70,15 +70,6 @@ local function checkMapNamesInDescription(description)
     return false
 end
 
-local function isInArray(array, value)
-    for _, v in ipairs(array) do
-        if v == value then
-            return true
-        end
-    end
-    return false
-end
-
 local function storeMapNames()
     mapNames = {}
     for _, mapID in pairs(C_ChallengeMode.GetMapTable()) do
@@ -113,6 +104,7 @@ local function updateTeleportDB()
     local filterText = searchBox:GetText():lower()
     local buttonIndex = 1
     local spellIDs = {}
+    local addedSpellIDs = {}
     local currentSeasonSpellIDs = {}
 
     storeMapNames()
@@ -136,11 +128,13 @@ local function updateTeleportDB()
                         if (isSlotKnown and cooldownHours == 8) or isMageFlyoutId(ID) then
                             local spellInfo = C_Spell.GetSpellInfo(spellID)
                             local description = string.gsub(C_Spell.GetSpellDescription(spellID):lower(), "-", "")
-                            if spellInfo and IsSpellKnown(spellID)
+                            -- The same teleport can be listed in more than one flyout, only add it once
+                            if spellInfo and IsSpellKnown(spellID) and not addedSpellIDs[spellID]
                                 and (spellInfo.name:lower():find(filterText, 1, true) or description:find(filterText, 1, true)) then
+                                addedSpellIDs[spellID] = true
                                 if checkMapNamesInDescription(description) then
                                     table.insert(spellIDs, 1, spellID)
-                                    table.insert(currentSeasonSpellIDs, spellID)
+                                    currentSeasonSpellIDs[spellID] = true
                                 else
                                     table.insert(spellIDs, spellID)
                                 end
@@ -153,7 +147,7 @@ local function updateTeleportDB()
     end
 
     for _, spellID in ipairs(spellIDs) do
-        TS.createSpellButton(spellID, buttonIndex, isInArray(currentSeasonSpellIDs, spellID))
+        TS.createSpellButton(spellID, buttonIndex, currentSeasonSpellIDs[spellID])
         buttonIndex = buttonIndex + 1
     end
 
